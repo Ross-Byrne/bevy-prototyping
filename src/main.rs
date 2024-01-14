@@ -7,6 +7,9 @@ struct Person;
 struct Player;
 
 #[derive(Component)]
+struct Shield;
+
+#[derive(Component)]
 struct Name(String);
 
 fn main() {
@@ -19,6 +22,8 @@ fn main() {
 
 fn setup(mut commands: Commands, asset_server: Res<AssetServer>) {
     commands.spawn(Camera2dBundle::default());
+
+    // Add player sprite
     commands.spawn((
         SpriteBundle {
             texture: asset_server.load("player.png"),
@@ -26,6 +31,20 @@ fn setup(mut commands: Commands, asset_server: Res<AssetServer>) {
             ..default()
         },
         Player,
+    ));
+
+    // Add player shield and scale up sprite
+    let mut shield_transform: Transform = Transform::from_xyz(100., 0., 0.);
+    shield_transform.scale = Vec3::new(1.3, 1.3, 0.);
+
+    commands.spawn((
+        SpriteBundle {
+            texture: asset_server.load("shield.png"),
+            transform: shield_transform,
+            ..default()
+        },
+        Player,
+        Shield,
     ));
 }
 
