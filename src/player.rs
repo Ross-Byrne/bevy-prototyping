@@ -43,8 +43,6 @@ fn setup(mut commands: Commands, asset_server: Res<AssetServer>) {
     ));
 }
 
-/// The sprite is animated by changing its translation depending on the time that has passed since
-/// the last frame.
 fn player_movement(
     keyboard_input: Res<Input<KeyCode>>,
     time: Res<Time>,
