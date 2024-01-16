@@ -10,14 +10,11 @@ pub struct Shield;
 
 impl Plugin for PlayerPlugin {
     fn build(&self, app: &mut App) {
-        app.add_systems(Startup, setup)
-            .add_systems(Update, player_movement);
+        app.add_systems(Update, player_movement);
     }
 }
 
-fn setup(mut commands: Commands, asset_server: Res<AssetServer>) {
-    commands.spawn(Camera2dBundle::default());
-
+pub fn setup(mut commands: Commands, asset_server: Res<AssetServer>) {
     // Add player sprite
     commands.spawn((
         SpriteBundle {

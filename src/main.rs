@@ -12,9 +12,11 @@ fn main() {
     App::new()
         .add_plugins((DefaultPlugins, UIPlugin, PlayerPlugin))
         .add_systems(Startup, setup)
+        .add_systems(Startup, player::setup)
         .run();
 }
 
-fn setup(mut _commands: Commands, _asset_server: Res<AssetServer>) {
-    println!("Setting up main")
+fn setup(mut commands: Commands, _asset_server: Res<AssetServer>) {
+    println!("Setting up main");
+    commands.spawn(Camera2dBundle::default());
 }
