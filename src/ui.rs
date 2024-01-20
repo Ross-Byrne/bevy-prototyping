@@ -2,10 +2,10 @@ use bevy::{app::AppExit, prelude::*};
 
 pub struct UIPlugin;
 
-#[derive(Component)]
+#[derive(Component, Debug)]
 pub struct StartUI;
 
-#[derive(Component)]
+#[derive(Component, Debug)]
 pub struct ExitButton;
 
 impl Plugin for UIPlugin {

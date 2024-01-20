@@ -2,11 +2,13 @@ use bevy::prelude::*;
 
 pub struct PlayerPlugin;
 
-#[derive(Component)]
+#[derive(Component, Debug)]
 pub struct Player;
 
-#[derive(Component)]
+#[derive(Component, Debug)]
 pub struct Shield;
+
+const MOVEMENT_SPEED: f32 = 180.0;
 
 impl Plugin for PlayerPlugin {
     fn build(&self, app: &mut App) {
@@ -47,19 +49,19 @@ fn player_movement(
 ) {
     for (mut transform, ()) in &mut sprite_position {
         if keyboard_input.pressed(KeyCode::W) {
-            transform.translation.y += 180. * time.delta_seconds();
+            transform.translation.y += MOVEMENT_SPEED * time.delta_seconds();
         }
 
         if keyboard_input.pressed(KeyCode::S) {
-            transform.translation.y -= 180. * time.delta_seconds();
+            transform.translation.y -= MOVEMENT_SPEED * time.delta_seconds();
         }
 
         if keyboard_input.pressed(KeyCode::A) {
-            transform.translation.x -= 180. * time.delta_seconds();
+            transform.translation.x -= MOVEMENT_SPEED * time.delta_seconds();
         }
 
         if keyboard_input.pressed(KeyCode::D) {
-            transform.translation.x += 180. * time.delta_seconds();
+            transform.translation.x += MOVEMENT_SPEED * time.delta_seconds();
         }
     }
 }
