@@ -1,3 +1,4 @@
+use crate::asset_loader::ImageAssets;
 use crate::movement::{Acceleration, MovingObjectBundle, Velocity};
 use bevy::prelude::*;
 use rand::prelude::*;
@@ -5,11 +6,9 @@ use std::ops::Range;
 
 const VELOCITY_SCALAR: f32 = 50.0;
 const ACCELERATION_SCALAR: f32 = 1.0;
-const SPAWN_RANGE_X: Range<f32> = -60.0..60.0;
-const SPAWN_RANGE_Y: Range<f32> = 0.0..60.0;
+const SPAWN_RANGE_X: Range<f32> = -100.0..100.0;
+const SPAWN_RANGE_Y: Range<f32> = -100.0..100.0;
 const SPAWN_TIME_SECONDS: f32 = 3.0;
-const ROTATE_SPEED: f32 = 2.5;
-const RADIUS: f32 = 2.5;
 
 #[derive(Component, Debug)]
 pub struct Enemy;
@@ -34,7 +33,7 @@ fn spawn_enemy(
     mut commands: Commands,
     mut spawn_timer: ResMut<SpawnTimer>,
     time: Res<Time>,
-    asset_server: Res<AssetServer>,
+    image_assets: Res<ImageAssets>,
 ) {
     spawn_timer.timer.tick(time.delta());
     if !spawn_timer.timer.just_finished() {
@@ -57,7 +56,7 @@ fn spawn_enemy(
             acceleration: Acceleration::new(acceleration),
             velocity: Velocity::new(velocity),
             sprite: SpriteBundle {
-                texture: asset_server.load("circle.png"),
+                texture: image_assets.enemy.clone(),
                 transform: Transform::from_translation(translation),
                 ..default()
             },

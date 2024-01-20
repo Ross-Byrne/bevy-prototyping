@@ -1,3 +1,4 @@
+use crate::asset_loader::ImageAssets;
 use crate::movement::{Acceleration, MovingObjectBundle, Velocity};
 use bevy::prelude::*;
 
@@ -17,15 +18,15 @@ impl Plugin for PlayerPlugin {
     }
 }
 
-pub fn setup(mut commands: Commands, asset_server: Res<AssetServer>) {
+pub fn setup(mut commands: Commands, image_assets: Res<ImageAssets>) {
     // Add player sprite
     commands.spawn((
         MovingObjectBundle {
             velocity: Velocity::new(Vec3::ZERO),
             acceleration: Acceleration::new(Vec3::ZERO),
             sprite: SpriteBundle {
-                texture: asset_server.load("circle.png"),
-                transform: Transform::from_xyz(0., 0., 0.),
+                texture: image_assets.player.clone(),
+                transform: Transform::from_xyz(0., 0., 1.),
                 ..default()
             },
         },
@@ -33,14 +34,18 @@ pub fn setup(mut commands: Commands, asset_server: Res<AssetServer>) {
     ));
 
     // Add player shield and scale up sprite
-    let mut shield_transform: Transform = Transform::from_xyz(0., 0., 0.);
+    let mut shield_transform: Transform = Transform::from_xyz(0., 0., 1.);
     shield_transform.scale = Vec3::new(1.3, 1.3, 0.);
 
     commands.spawn((
-        SpriteBundle {
-            texture: asset_server.load("ring.png"),
-            transform: shield_transform,
-            ..default()
+        MovingObjectBundle {
+            velocity: Velocity::new(Vec3::ZERO),
+            acceleration: Acceleration::new(Vec3::ZERO),
+            sprite: SpriteBundle {
+                texture: image_assets.shield.clone(),
+                transform: Transform::from_xyz(0., 0., 1.),
+                ..default()
+            },
         },
         Player,
         Shield,
@@ -49,24 +54,27 @@ pub fn setup(mut commands: Commands, asset_server: Res<AssetServer>) {
 
 fn player_movement(
     keyboard_input: Res<Input<KeyCode>>,
-    time: Res<Time>,
-    mut sprite_position: Query<(&mut Transform, With<Player>)>,
+    mut query: Query<&mut Velocity, With<Player>>,
 ) {
-    for (mut transform, ()) in &mut sprite_position {
+    for mut velocity in &mut query {
+        let mut movement: Vec3 = Vec3::ZERO;
+
         if keyboard_input.pressed(KeyCode::W) {
-            transform.translation.y += MOVEMENT_SPEED * time.delta_seconds();
+            movement.y = MOVEMENT_SPEED;
         }
 
         if keyboard_input.pressed(KeyCode::S) {
-            transform.translation.y -= MOVEMENT_SPEED * time.delta_seconds();
+            movement.y = -MOVEMENT_SPEED;
         }
 
         if keyboard_input.pressed(KeyCode::A) {
-            transform.translation.x -= MOVEMENT_SPEED * time.delta_seconds();
+            movement.x = -MOVEMENT_SPEED;
         }
 
         if keyboard_input.pressed(KeyCode::D) {
-            transform.translation.x += MOVEMENT_SPEED * time.delta_seconds();
+            movement.x = MOVEMENT_SPEED;
         }
+
+        velocity.value = movement;
     }
 }
