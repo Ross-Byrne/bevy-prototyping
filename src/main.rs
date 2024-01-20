@@ -1,8 +1,12 @@
+pub mod enemy;
+pub mod movement;
 pub mod player;
 pub mod ui;
 
-use crate::player::*;
-use crate::ui::*;
+use crate::enemy::EnemyPlugin;
+use crate::movement::MovementPlugin;
+use crate::player::PlayerPlugin;
+// use crate::ui::UIPlugin;
 use bevy::prelude::*;
 
 #[derive(Component, Debug)]
@@ -11,8 +15,10 @@ struct Name(String);
 fn main() {
     App::new()
         .add_plugins(DefaultPlugins)
-        .add_plugins(UIPlugin)
+        // .add_plugins(UIPlugin)
         .add_plugins(PlayerPlugin)
+        .add_plugins(MovementPlugin)
+        .add_plugins(EnemyPlugin)
         .add_systems(Startup, setup)
         .add_systems(Startup, player::setup)
         .run();

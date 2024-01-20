@@ -1,3 +1,4 @@
+use crate::movement::{Acceleration, MovingObjectBundle, Velocity};
 use bevy::prelude::*;
 
 pub struct PlayerPlugin;
@@ -19,16 +20,20 @@ impl Plugin for PlayerPlugin {
 pub fn setup(mut commands: Commands, asset_server: Res<AssetServer>) {
     // Add player sprite
     commands.spawn((
-        SpriteBundle {
-            texture: asset_server.load("circle.png"),
-            transform: Transform::from_xyz(100., 0., 0.),
-            ..default()
+        MovingObjectBundle {
+            velocity: Velocity::new(Vec3::ZERO),
+            acceleration: Acceleration::new(Vec3::ZERO),
+            sprite: SpriteBundle {
+                texture: asset_server.load("circle.png"),
+                transform: Transform::from_xyz(0., 0., 0.),
+                ..default()
+            },
         },
         Player,
     ));
 
     // Add player shield and scale up sprite
-    let mut shield_transform: Transform = Transform::from_xyz(100., 0., 0.);
+    let mut shield_transform: Transform = Transform::from_xyz(0., 0., 0.);
     shield_transform.scale = Vec3::new(1.3, 1.3, 0.);
 
     commands.spawn((
