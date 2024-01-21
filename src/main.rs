@@ -1,11 +1,11 @@
 mod asset_loader;
 mod camera;
+mod debug;
 mod enemy;
 mod movement;
 mod player;
 mod schedule;
 mod ui;
-mod debug;
 
 use asset_loader::AssetLoaderPlugin;
 use enemy::EnemyPlugin;
@@ -14,8 +14,8 @@ use player::PlayerPlugin;
 // use ui::UIPlugin;
 use bevy::prelude::*;
 use camera::CameraPlugin;
-use schedule::SchedulePlugin;
 use debug::DebugPlugin;
+use schedule::SchedulePlugin;
 
 #[derive(Component, Debug)]
 struct Name(String);

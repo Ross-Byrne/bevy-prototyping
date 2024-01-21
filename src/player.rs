@@ -1,5 +1,5 @@
 use crate::asset_loader::ImageAssets;
-use crate::movement::{Acceleration, MovingObjectBundle, Velocity};
+use crate::movement::{Acceleration, MovingObjectBundle, Rotation, Velocity};
 use crate::schedule::InGameSet;
 use bevy::prelude::*;
 
@@ -16,8 +16,8 @@ pub struct Projectile {
     pub despawn_timer: Timer,
 }
 
-const MOVEMENT_SPEED: f32 = 180.0;
-const PROJECTILE_SPEED: f32 = 300.0;
+const MOVEMENT_SPEED: f32 = 280.0;
+const PROJECTILE_SPEED: f32 = 500.0;
 const PROJECTILE_FORWARD_SPAWN_SCALAR: f32 = 30.0;
 const PROJECTILE_DESPAWN_TIME_SECONDS: f32 = 2.0;
 
@@ -50,6 +50,7 @@ fn spawn_player(mut commands: Commands, image_assets: Res<ImageAssets>) {
             },
         },
         Player,
+        Rotation::new(),
     ));
 
     // Add player shield and scale up sprite
@@ -68,33 +69,42 @@ fn spawn_player(mut commands: Commands, image_assets: Res<ImageAssets>) {
         },
         Player,
         Shield,
+        Rotation::new(),
     ));
 }
 
 fn player_movement(
     keyboard_input: Res<Input<KeyCode>>,
-    mut query: Query<&mut Velocity, With<Player>>,
+    mut query: Query<(&Transform, &mut Velocity, &mut Rotation), With<Player>>,
 ) {
-    for mut velocity in &mut query {
-        let mut movement: Vec3 = Vec3::ZERO;
-
-        if keyboard_input.pressed(KeyCode::W) {
-            movement.y = MOVEMENT_SPEED;
-        }
-
-        if keyboard_input.pressed(KeyCode::S) {
-            movement.y = -MOVEMENT_SPEED;
-        }
+    for (transform, mut velocity, mut rotation) in query.iter_mut() {
+        let mut default_rotation_factor = 0.0;
+        let mut movement_factor = 0.0;
 
         if keyboard_input.pressed(KeyCode::A) {
-            movement.x = -MOVEMENT_SPEED;
+            default_rotation_factor += 1.0;
         }
 
         if keyboard_input.pressed(KeyCode::D) {
-            movement.x = MOVEMENT_SPEED;
+            default_rotation_factor -= 1.0;
         }
 
-        velocity.value = movement;
+        if keyboard_input.pressed(KeyCode::W) {
+            movement_factor += 1.0;
+        }
+
+        rotation.factor = default_rotation_factor;
+
+        // get the ship's forward vector by applying the current rotation to the ships initial facing
+        // vector
+        let movement_direction = transform.rotation * Vec3::Y;
+        // get the distance the ship will move based on direction, the ship's movement speed and delta
+        // time
+        let movement_distance = movement_factor * MOVEMENT_SPEED;
+        // create the change in translation using the new movement direction and distance
+        let translation_delta = movement_direction * movement_distance;
+        // update the ship translation with our new translation delta
+        velocity.value = translation_delta;
     }
 }
 
@@ -113,7 +123,7 @@ fn player_weapon_controls(
         let transform_vec: Vec3 =
             transform.translation + transform.up() * PROJECTILE_FORWARD_SPAWN_SCALAR;
         let mut projectile_transform: Transform = Transform::from_translation(transform_vec);
-        projectile_transform.scale = Vec3::new(0.4, 0.4, 0.);
+        projectile_transform.scale = Vec3::new(0.3, 0.3, 0.);
 
         commands.spawn((
             MovingObjectBundle {
