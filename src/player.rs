@@ -22,13 +22,14 @@ const PROJECTILE_DESPAWN_TIME_SECONDS: f32 = 2.0;
 
 impl Plugin for PlayerPlugin {
     fn build(&self, app: &mut App) {
-        app.add_systems(Update, player_movement)
+        app.add_systems(PostStartup, spawn_player)
+            .add_systems(Update, player_movement)
             .add_systems(Update, player_weapon_controls)
             .add_systems(Update, despawn_projectile);
     }
 }
 
-pub fn setup(mut commands: Commands, image_assets: Res<ImageAssets>) {
+fn spawn_player(mut commands: Commands, image_assets: Res<ImageAssets>) {
     // Add player sprite
     commands.spawn((
         MovingObjectBundle {

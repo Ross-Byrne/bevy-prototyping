@@ -1,15 +1,19 @@
-pub mod asset_loader;
-pub mod enemy;
-pub mod movement;
-pub mod player;
-pub mod ui;
+mod asset_loader;
+mod camera;
+mod enemy;
+mod movement;
+mod player;
+mod schedule;
+mod ui;
 
-use crate::asset_loader::AssetLoaderPlugin;
-use crate::enemy::EnemyPlugin;
-use crate::movement::MovementPlugin;
-use crate::player::PlayerPlugin;
-// use crate::ui::UIPlugin;
+use asset_loader::AssetLoaderPlugin;
+use enemy::EnemyPlugin;
+use movement::MovementPlugin;
+use player::PlayerPlugin;
+// use ui::UIPlugin;
 use bevy::prelude::*;
+use camera::CameraPlugin;
+use schedule::SchedulePlugin;
 
 #[derive(Component, Debug)]
 struct Name(String);
@@ -17,17 +21,12 @@ struct Name(String);
 fn main() {
     App::new()
         .add_plugins(DefaultPlugins)
+        .add_plugins(CameraPlugin)
         .add_plugins(AssetLoaderPlugin)
         // .add_plugins(UIPlugin)
         .add_plugins(PlayerPlugin)
         .add_plugins(MovementPlugin)
         .add_plugins(EnemyPlugin)
-        .add_systems(Startup, setup)
-        .add_systems(PostStartup, player::setup)
+        .add_plugins(SchedulePlugin)
         .run();
-}
-
-fn setup(mut commands: Commands, _asset_server: Res<AssetServer>) {
-    println!("Setting up main");
-    commands.spawn(Camera2dBundle::default());
 }
