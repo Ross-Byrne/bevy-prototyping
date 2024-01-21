@@ -9,9 +9,12 @@ const ACCELERATION_SCALAR: f32 = 1.0;
 const SPAWN_RANGE_X: Range<f32> = -100.0..100.0;
 const SPAWN_RANGE_Y: Range<f32> = -100.0..100.0;
 const SPAWN_TIME_SECONDS: f32 = 3.0;
+const DESPAWN_TIME_SECONDS: f32 = 20.0;
 
 #[derive(Component, Debug)]
-pub struct Enemy;
+pub struct Enemy {
+    pub despawn_timer: Timer,
+}
 
 #[derive(Resource, Debug)]
 pub struct SpawnTimer {
@@ -25,7 +28,8 @@ impl Plugin for EnemyPlugin {
         app.insert_resource(SpawnTimer {
             timer: Timer::from_seconds(SPAWN_TIME_SECONDS, TimerMode::Repeating),
         })
-        .add_systems(Update, spawn_enemy);
+        .add_systems(Update, spawn_enemy)
+        .add_systems(Update, despawn_enemy);
     }
 }
 
@@ -61,8 +65,24 @@ fn spawn_enemy(
                 ..default()
             },
         },
-        Enemy,
+        Enemy {
+            despawn_timer: Timer::from_seconds(DESPAWN_TIME_SECONDS, TimerMode::Once),
+        },
     ));
+}
+
+fn despawn_enemy(
+    mut commands: Commands,
+    mut query: Query<(Entity, &mut Enemy), With<Enemy>>,
+    time: Res<Time>,
+) {
+    for (entity, mut enemy) in query.iter_mut() {
+        enemy.despawn_timer.tick(time.delta());
+
+        if enemy.despawn_timer.just_finished() {
+            commands.entity(entity).despawn_recursive();
+        }
+    }
 }
 
 fn random_unit_vector(rng: &mut ThreadRng) -> Vec3 {
