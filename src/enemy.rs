@@ -1,5 +1,6 @@
 use crate::asset_loader::ImageAssets;
 use crate::movement::{Acceleration, MovingObjectBundle, Velocity};
+use crate::schedule::InGameSet;
 use bevy::prelude::*;
 use rand::prelude::*;
 use std::ops::Range;
@@ -28,8 +29,8 @@ impl Plugin for EnemyPlugin {
         app.insert_resource(SpawnTimer {
             timer: Timer::from_seconds(SPAWN_TIME_SECONDS, TimerMode::Repeating),
         })
-        .add_systems(Update, spawn_enemy)
-        .add_systems(Update, despawn_enemy);
+        .add_systems(Update, spawn_enemy.in_set(InGameSet::UserInput))
+        .add_systems(Update, despawn_enemy.in_set(InGameSet::DespawnEntities));
     }
 }
 

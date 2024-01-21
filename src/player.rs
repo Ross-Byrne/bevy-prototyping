@@ -1,5 +1,6 @@
 use crate::asset_loader::ImageAssets;
 use crate::movement::{Acceleration, MovingObjectBundle, Velocity};
+use crate::schedule::InGameSet;
 use bevy::prelude::*;
 
 pub struct PlayerPlugin;
@@ -23,9 +24,16 @@ const PROJECTILE_DESPAWN_TIME_SECONDS: f32 = 2.0;
 impl Plugin for PlayerPlugin {
     fn build(&self, app: &mut App) {
         app.add_systems(PostStartup, spawn_player)
-            .add_systems(Update, player_movement)
-            .add_systems(Update, player_weapon_controls)
-            .add_systems(Update, despawn_projectile);
+            .add_systems(
+                Update,
+                (player_movement, player_weapon_controls)
+                    .chain()
+                    .in_set(InGameSet::UserInput),
+            )
+            .add_systems(
+                Update,
+                despawn_projectile.in_set(InGameSet::DespawnEntities),
+            );
     }
 }
 

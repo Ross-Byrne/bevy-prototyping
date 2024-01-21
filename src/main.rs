@@ -5,6 +5,7 @@ mod movement;
 mod player;
 mod schedule;
 mod ui;
+mod debug;
 
 use asset_loader::AssetLoaderPlugin;
 use enemy::EnemyPlugin;
@@ -14,6 +15,7 @@ use player::PlayerPlugin;
 use bevy::prelude::*;
 use camera::CameraPlugin;
 use schedule::SchedulePlugin;
+use debug::DebugPlugin;
 
 #[derive(Component, Debug)]
 struct Name(String);
@@ -28,5 +30,6 @@ fn main() {
         .add_plugins(MovementPlugin)
         .add_plugins(EnemyPlugin)
         .add_plugins(SchedulePlugin)
+        .add_plugins(DebugPlugin)
         .run();
 }
