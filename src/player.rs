@@ -18,7 +18,7 @@ pub struct Projectile {
 
 const MOVEMENT_SPEED: f32 = 280.0;
 const PROJECTILE_SPEED: f32 = 500.0;
-const PROJECTILE_FORWARD_SPAWN_SCALAR: f32 = 30.0;
+const PROJECTILE_FORWARD_SPAWN_SCALAR: f32 = 20.0;
 const PROJECTILE_DESPAWN_TIME_SECONDS: f32 = 2.0;
 
 impl Plugin for PlayerPlugin {
@@ -39,13 +39,16 @@ impl Plugin for PlayerPlugin {
 
 fn spawn_player(mut commands: Commands, image_assets: Res<ImageAssets>) {
     // Add player sprite
+    let mut player_transform: Transform = Transform::from_xyz(0., 0., 1.);
+    player_transform.scale = Vec3::new(0.2, 0.2, 0.);
+
     commands.spawn((
         MovingObjectBundle {
             velocity: Velocity::new(Vec3::ZERO),
             acceleration: Acceleration::new(Vec3::ZERO),
             sprite: SpriteBundle {
                 texture: image_assets.player.clone(),
-                transform: Transform::from_xyz(0., 0., 1.),
+                transform: player_transform,
                 ..default()
             },
         },
@@ -53,24 +56,25 @@ fn spawn_player(mut commands: Commands, image_assets: Res<ImageAssets>) {
         Rotation::new(),
     ));
 
-    // Add player shield and scale up sprite
-    let mut shield_transform: Transform = Transform::from_xyz(0., 0., 1.);
-    shield_transform.scale = Vec3::new(1.3, 1.3, 0.);
+    // // Add player shield and scale up sprite
+    // let mut shield_transform: Transform = Transform::from_translation(player_transform.translation);
+    // shield_transform.scale = Vec3::new(0.4, 0.4, 0.);
+    // shield_transform.translation = player_transform.translation;
 
-    commands.spawn((
-        MovingObjectBundle {
-            velocity: Velocity::new(Vec3::ZERO),
-            acceleration: Acceleration::new(Vec3::ZERO),
-            sprite: SpriteBundle {
-                texture: image_assets.shield.clone(),
-                transform: shield_transform,
-                ..default()
-            },
-        },
-        Player,
-        Shield,
-        Rotation::new(),
-    ));
+    // commands.spawn((
+    //     MovingObjectBundle {
+    //         velocity: Velocity::new(Vec3::ZERO),
+    //         acceleration: Acceleration::new(Vec3::ZERO),
+    //         sprite: SpriteBundle {
+    //             texture: image_assets.shield.clone(),
+    //             transform: shield_transform,
+    //             ..default()
+    //         },
+    //     },
+    //     Player,
+    //     Shield,
+    //     Rotation::new(),
+    // ));
 }
 
 fn player_movement(
@@ -123,7 +127,7 @@ fn player_weapon_controls(
         let transform_vec: Vec3 =
             transform.translation + transform.up() * PROJECTILE_FORWARD_SPAWN_SCALAR;
         let mut projectile_transform: Transform = Transform::from_translation(transform_vec);
-        projectile_transform.scale = Vec3::new(0.3, 0.3, 0.);
+        projectile_transform.scale = Vec3::new(0.03, 0.03, 0.);
 
         commands.spawn((
             MovingObjectBundle {

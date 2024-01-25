@@ -19,7 +19,7 @@ impl Plugin for AssetLoaderPlugin {
 
 fn load_assets(mut image_assets: ResMut<ImageAssets>, asset_server: Res<AssetServer>) {
     *image_assets = ImageAssets {
-        player: asset_server.load("circle.png"),
+        player: asset_server.load("triangle.png"),
         enemy: asset_server.load("diamond.png"),
         shield: asset_server.load("ring.png"),
         projectile: asset_server.load("circle.png"),
