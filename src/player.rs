@@ -1,6 +1,7 @@
 use crate::asset_loader::ImageAssets;
 use crate::movement::{Acceleration, MovingObjectBundle, Rotation, Velocity};
 use crate::schedule::InGameSet;
+use crate::state::GameState;
 use bevy::prelude::*;
 
 pub struct PlayerPlugin;
@@ -23,7 +24,7 @@ const PROJECTILE_DESPAWN_TIME_SECONDS: f32 = 2.0;
 
 impl Plugin for PlayerPlugin {
     fn build(&self, app: &mut App) {
-        app.add_systems(PostStartup, spawn_player)
+        app.add_systems(OnEnter(GameState::LoadingGame), spawn_player)
             .add_systems(
                 Update,
                 (player_movement, player_weapon_controls)

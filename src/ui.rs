@@ -1,3 +1,4 @@
+use crate::state::{GameState, OnGameStart};
 use bevy::{app::AppExit, prelude::*};
 
 pub struct UIPlugin;
@@ -6,18 +7,28 @@ pub struct UIPlugin;
 pub struct StartUI;
 
 #[derive(Component, Debug)]
+pub struct StartButton;
+
+#[derive(Component, Debug)]
+pub struct SettingsButton;
+
+#[derive(Component, Debug)]
 pub struct ExitButton;
 
 impl Plugin for UIPlugin {
     fn build(&self, app: &mut App) {
-        app.add_systems(Startup, setup)
-            .add_systems(Startup, spawn_buttons)
-            .add_systems(Update, (button_system, on_click_exit).chain());
+        app.add_systems(
+            Startup,
+            spawn_buttons.run_if(in_state(GameState::StartMenu)),
+        )
+        .add_systems(
+            Update,
+            (button_system, on_click_start, on_click_exit)
+                .chain()
+                .run_if(in_state(GameState::StartMenu)),
+        )
+        .add_systems(OnEnter(GameState::LoadingGame), despawn_start_ui);
     }
-}
-
-fn setup(mut _commands: Commands, _asset_server: Res<AssetServer>) {
-    println!("Init game UI");
 }
 
 const NORMAL_BUTTON: Color = Color::rgb(0.15, 0.15, 0.15);
@@ -72,7 +83,9 @@ fn spawn_buttons(mut commands: Commands) {
     let container = commands.spawn((container_node, StartUI)).id();
 
     // Create and spawn Start Game Button
-    let button = commands.spawn((get_button_bundle(), StartUI)).id();
+    let button = commands
+        .spawn((get_button_bundle(), StartUI, StartButton))
+        .id();
     let button_text = commands
         .spawn((get_text_bundle("Start Game"), StartUI))
         .id();
@@ -80,7 +93,9 @@ fn spawn_buttons(mut commands: Commands) {
     commands.entity(container).push_children(&[button]);
 
     // Create and spawn Settings Button
-    let button = commands.spawn((get_button_bundle(), StartUI)).id();
+    let button = commands
+        .spawn((get_button_bundle(), StartUI, SettingsButton))
+        .id();
     let button_text = commands.spawn((get_text_bundle("Settings"), StartUI)).id();
     commands.entity(button).push_children(&[button_text]);
     commands.entity(container).push_children(&[button]);
@@ -118,6 +133,23 @@ fn button_system(
     }
 }
 
+fn on_click_start(
+    mut event_writer: EventWriter<OnGameStart>,
+    mut interaction_query: Query<&Interaction, (Changed<Interaction>, With<StartButton>)>,
+) {
+    for interaction in &mut interaction_query {
+        match *interaction {
+            Interaction::Pressed => {
+                info!("clicked Start!");
+
+                // Send game start event.
+                event_writer.send(OnGameStart);
+            }
+            _ => {}
+        }
+    }
+}
+
 fn on_click_exit(
     mut app_exit_events: EventWriter<AppExit>,
     mut interaction_query: Query<&Interaction, (Changed<Interaction>, With<ExitButton>)>,
@@ -127,8 +159,13 @@ fn on_click_exit(
             Interaction::Pressed => {
                 app_exit_events.send(AppExit);
             }
-            Interaction::Hovered => {}
-            Interaction::None => {}
+            _ => {}
         }
+    }
+}
+
+fn despawn_start_ui(mut commands: Commands, mut query: Query<Entity, With<StartUI>>) {
+    for entity in query.iter_mut() {
+        commands.entity(entity).despawn_recursive();
     }
 }

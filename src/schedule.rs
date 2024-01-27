@@ -1,3 +1,4 @@
+use crate::state::GameState;
 use bevy::prelude::*;
 
 #[derive(Debug, Hash, PartialEq, Eq, Clone, SystemSet)]
@@ -21,7 +22,8 @@ impl Plugin for SchedulePlugin {
                 InGameSet::EntityUpdates,
                 InGameSet::CollisionDetection,
             )
-                .chain(),
+                .chain()
+                .run_if(in_state(GameState::InGame)),
         )
         .add_systems(
             Update,
