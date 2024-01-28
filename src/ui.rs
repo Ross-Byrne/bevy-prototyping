@@ -4,7 +4,7 @@ use bevy::{app::AppExit, prelude::*};
 pub struct UIPlugin;
 
 #[derive(Component, Debug)]
-pub struct StartUI;
+pub struct StartUIRoot;
 
 #[derive(Component, Debug)]
 pub struct StartButton;
@@ -80,31 +80,23 @@ fn spawn_buttons(mut commands: Commands) {
         },
         ..default()
     };
-    let container = commands.spawn((container_node, StartUI)).id();
+    let container = commands.spawn((container_node, StartUIRoot)).id();
 
     // Create and spawn Start Game Button
-    let button = commands
-        .spawn((get_button_bundle(), StartUI, StartButton))
-        .id();
-    let button_text = commands
-        .spawn((get_text_bundle("Start Game"), StartUI))
-        .id();
+    let button = commands.spawn((get_button_bundle(), StartButton)).id();
+    let button_text = commands.spawn(get_text_bundle("Start Game")).id();
     commands.entity(button).push_children(&[button_text]);
     commands.entity(container).push_children(&[button]);
 
     // Create and spawn Settings Button
-    let button = commands
-        .spawn((get_button_bundle(), StartUI, SettingsButton))
-        .id();
-    let button_text = commands.spawn((get_text_bundle("Settings"), StartUI)).id();
+    let button = commands.spawn((get_button_bundle(), SettingsButton)).id();
+    let button_text = commands.spawn(get_text_bundle("Settings")).id();
     commands.entity(button).push_children(&[button_text]);
     commands.entity(container).push_children(&[button]);
 
     // Create and spawn Quit Button
-    let button = commands
-        .spawn((get_button_bundle(), StartUI, ExitButton))
-        .id();
-    let button_text = commands.spawn((get_text_bundle("Quit"), StartUI)).id();
+    let button = commands.spawn((get_button_bundle(), ExitButton)).id();
+    let button_text = commands.spawn(get_text_bundle("Quit")).id();
     commands.entity(button).push_children(&[button_text]);
     commands.entity(container).push_children(&[button]);
 }
@@ -164,8 +156,10 @@ fn on_click_exit(
     }
 }
 
-fn despawn_start_ui(mut commands: Commands, mut query: Query<Entity, With<StartUI>>) {
-    for entity in query.iter_mut() {
-        commands.entity(entity).despawn_recursive();
-    }
+fn despawn_start_ui(mut commands: Commands, query: Query<Entity, With<StartUIRoot>>) {
+    let Ok(start_ui_root) = query.get_single() else {
+        return;
+    };
+
+    commands.entity(start_ui_root).despawn_recursive();
 }
