@@ -1,4 +1,5 @@
 use crate::state::{GameState, OnGameStart};
+use crate::util::despawn_components;
 use bevy::{app::AppExit, prelude::*};
 
 pub struct UIPlugin;
@@ -17,17 +18,17 @@ pub struct ExitButton;
 
 impl Plugin for UIPlugin {
     fn build(&self, app: &mut App) {
-        app.add_systems(
-            Startup,
-            spawn_buttons.run_if(in_state(GameState::StartMenu)),
-        )
-        .add_systems(
-            Update,
-            (button_system, on_click_start, on_click_exit)
-                .chain()
-                .run_if(in_state(GameState::StartMenu)),
-        )
-        .add_systems(OnEnter(GameState::LoadingGame), despawn_start_ui);
+        app.add_systems(OnEnter(GameState::StartMenu), spawn_buttons)
+            .add_systems(
+                Update,
+                (button_system, on_click_start, on_click_exit)
+                    .chain()
+                    .run_if(in_state(GameState::StartMenu)),
+            )
+            .add_systems(
+                OnExit(GameState::StartMenu),
+                despawn_components::<StartUIRoot>,
+            );
     }
 }
 
@@ -154,12 +155,4 @@ fn on_click_exit(
             _ => {}
         }
     }
-}
-
-fn despawn_start_ui(mut commands: Commands, query: Query<Entity, With<StartUIRoot>>) {
-    let Ok(start_ui_root) = query.get_single() else {
-        return;
-    };
-
-    commands.entity(start_ui_root).despawn_recursive();
 }

@@ -18,8 +18,9 @@ impl Plugin for StatePlugin {
     fn build(&self, app: &mut App) {
         app.add_state::<GameState>()
             .add_event::<OnGameStart>()
-            .add_systems(Update, (on_game_start, game_state_input_events).chain())
-            .add_systems(OnEnter(GameState::LoadingGame), on_enter_loading);
+            .add_systems(Update, on_game_start.run_if(on_event::<OnGameStart>()))
+            .add_systems(Update, game_state_input_events)
+            .add_systems(OnEnter(GameState::LoadingGame), on_enter_loading_game);
     }
 }
 
@@ -37,24 +38,14 @@ fn game_state_input_events(
     }
 }
 
-fn on_game_start(
-    mut next_state: ResMut<NextState<GameState>>,
-    mut event_reader: EventReader<OnGameStart>,
-) {
-    for _ in event_reader.read() {
-        info!("State Transition to in game");
-        // transition to in game state
-        next_state.set(GameState::LoadingGame);
-        return;
-    }
+fn on_game_start(mut next_state: ResMut<NextState<GameState>>) {
+    // Transition to LoadingGame state,
+    // to allow game setup
+    next_state.set(GameState::LoadingGame);
 }
 
-fn on_enter_loading(mut next_state: ResMut<NextState<GameState>>, state: Res<State<GameState>>) {
-    match state.get() {
-        GameState::LoadingGame => {
-            info!("Transitioning to in game");
-            next_state.set(GameState::InGame)
-        }
-        _ => (),
-    }
+fn on_enter_loading_game(mut next_state: ResMut<NextState<GameState>>) {
+    // After entering LoadingGame state, queue up change to InGame.
+    // Is allows assets and setup to happen before game starts.
+    next_state.set(GameState::InGame);
 }

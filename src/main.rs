@@ -7,6 +7,7 @@ mod player;
 mod schedule;
 mod state;
 mod ui;
+mod util;
 
 use asset_loader::AssetLoaderPlugin;
 use bevy::prelude::*;
