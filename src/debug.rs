@@ -3,7 +3,7 @@ use crate::state::GameState;
 use bevy::prelude::*;
 
 #[derive(Resource, Debug)]
-struct PrintoutTimer(Timer);
+pub struct PrintoutTimer(pub Timer);
 
 pub struct DebugPlugin;
 

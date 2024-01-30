@@ -42,8 +42,8 @@ fn spawn_player(mut commands: Commands, image_assets: Res<ImageAssets>) {
     info!("Spawning Player");
 
     // Add player sprite
-    let mut player_transform: Transform = Transform::from_xyz(0., 0., 1.);
-    player_transform.scale = Vec3::new(0.2, 0.2, 0.);
+    let player_transform: Transform =
+        Transform::from_xyz(0., 0., 1.).with_scale(Vec3::new(0.2, 0.2, 1.));
 
     commands.spawn((
         MovingObjectBundle {
@@ -60,9 +60,8 @@ fn spawn_player(mut commands: Commands, image_assets: Res<ImageAssets>) {
     ));
 
     // // Add player shield and scale up sprite
-    // let mut shield_transform: Transform = Transform::from_translation(player_transform.translation);
-    // shield_transform.scale = Vec3::new(0.4, 0.4, 0.);
-    // shield_transform.translation = player_transform.translation;
+    // let shield_transform: Transform =
+    //     Transform::from_translation(player_transform.translation).with_scale(Vec3::splat(0.4));
 
     // commands.spawn((
     //     MovingObjectBundle {
