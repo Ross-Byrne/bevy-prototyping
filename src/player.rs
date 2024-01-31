@@ -42,8 +42,7 @@ fn spawn_player(mut commands: Commands, image_assets: Res<ImageAssets>) {
     info!("Spawning Player");
 
     // Add player sprite
-    let player_transform: Transform =
-        Transform::from_xyz(0., 0., 1.).with_scale(Vec3::new(0.2, 0.2, 1.));
+    let player_transform: Transform = Transform::from_xyz(0., 0., 3.).with_scale(Vec3::splat(0.2));
 
     commands.spawn((
         MovingObjectBundle {

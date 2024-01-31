@@ -50,14 +50,11 @@ fn spawn_enemy(
     let translation = Vec3::new(
         rng.gen_range(SPAWN_RANGE_X),
         rng.gen_range(SPAWN_RANGE_Y),
-        0.0,
+        2.0,
     );
 
     let velocity = random_unit_vector(&mut rng) * VELOCITY_SCALAR;
     let acceleration = random_unit_vector(&mut rng) * ACCELERATION_SCALAR;
-
-    let mut transform: Transform = Transform::from_translation(translation);
-    transform.scale = Vec3::new(0.2, 0.2, 0.);
 
     commands.spawn((
         MovingObjectBundle {
@@ -65,7 +62,7 @@ fn spawn_enemy(
             velocity: Velocity::new(velocity),
             sprite: SpriteBundle {
                 texture: image_assets.enemy.clone(),
-                transform: transform,
+                transform: Transform::from_translation(translation).with_scale(Vec3::splat(0.2)),
                 ..default()
             },
         },

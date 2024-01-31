@@ -12,7 +12,7 @@ mod util;
 
 use asset_loader::AssetLoaderPlugin;
 use bevy::prelude::*;
-// use bevy_mod_picking::prelude::*;
+use bevy_mod_picking::prelude::*;
 use camera::CameraPlugin;
 use debug::DebugPlugin;
 use enemy::EnemyPlugin;
@@ -29,7 +29,7 @@ struct Name(String);
 fn main() {
     App::new()
         .add_plugins(DefaultPlugins)
-        // .add_plugins(DefaultPickingPlugins)
+        .add_plugins(DefaultPickingPlugins)
         .add_plugins(CameraPlugin)
         .add_plugins(AssetLoaderPlugin)
         .add_plugins(UIPlugin)

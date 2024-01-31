@@ -1,8 +1,7 @@
 use crate::asset_loader::ImageAssets;
 use crate::state::GameState;
 use bevy::prelude::*;
-// use bevy_mod_picking::prelude::*;
-use bevy::window::PrimaryWindow;
+use bevy_mod_picking::prelude::*;
 
 #[derive(Component, Debug)]
 pub struct Station {
@@ -22,8 +21,7 @@ pub struct LevelManagerPlugin;
 
 impl Plugin for LevelManagerPlugin {
     fn build(&self, app: &mut App) {
-        app.add_systems(OnEnter(GameState::InGame), setup)
-            .add_systems(Update, detect_station_clicks);
+        app.add_systems(OnEnter(GameState::InGame), setup);
     }
 }
 
@@ -35,39 +33,17 @@ fn setup(mut commands: Commands, image_assets: Res<ImageAssets>) {
     commands.spawn((
         SpriteBundle {
             texture: image_assets.projectile.clone(),
-            transform: Transform::from_xyz(200.0, 200.0, 0.0).with_scale(Vec3::new(0.6, 0.6, 0.0)),
+            transform: Transform::from_xyz(200.0, 200.0, 1.0).with_scale(Vec3::splat(0.6)),
             ..default()
         },
         Station::new("Tade Station".to_owned()),
         Clickable,
+        On::<Pointer<Click>>::run(|event: Listener<Pointer<Click>>, query: Query<&Station>| {
+            for station in query.iter() {
+                info!("{:?}", station)
+            }
+
+            info!("The pointer clicked entity {:?}", event.target);
+        }),
     ));
-}
-
-fn detect_station_clicks(
-    mut _commands: Commands,
-    query: Query<&Transform, With<Clickable>>,
-    q_windows: Query<&Window, With<PrimaryWindow>>,
-    mouse_button_input: Res<Input<MouseButton>>,
-) {
-    if !mouse_button_input.just_pressed(MouseButton::Left) {
-        return;
-    }
-
-    info!("left mouse just pressed");
-    info!("{:?}", mouse_button_input);
-
-    // Games typically only have one window (the primary window)
-    let Ok(window) = q_windows.get_single() else {
-        return;
-    };
-
-    let Some(cursor_position) = window.cursor_position() else {
-        return;
-    };
-
-    info!("Cursor is at {:?}", cursor_position);
-
-    for transform in query.iter() {
-        info!("{:?}", transform)
-    }
 }
