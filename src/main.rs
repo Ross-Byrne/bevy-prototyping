@@ -14,7 +14,7 @@ use asset_loader::AssetLoaderPlugin;
 use bevy::prelude::*;
 use bevy_mod_picking::prelude::*;
 use camera::CameraPlugin;
-use debug::DebugPlugin;
+// use debug::DebugPlugin;
 use enemy::EnemyPlugin;
 use level_manager::LevelManagerPlugin;
 use movement::MovementPlugin;
@@ -37,7 +37,7 @@ fn main() {
         .add_plugins(MovementPlugin)
         .add_plugins(EnemyPlugin)
         .add_plugins(SchedulePlugin)
-        .add_plugins(DebugPlugin)
+        // .add_plugins(DebugPlugin)
         .add_plugins(StatePlugin)
         .add_plugins(LevelManagerPlugin)
         .run();
