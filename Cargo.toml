@@ -7,8 +7,7 @@ edition = "2021"
 
 [dependencies]
 bevy = "0.12.1"
-bevy_mod_picking = { version = "0.17.0",  default-features = false, features = ["backend_sprite", "backend_raycast"]}
-bevy_rapier2d = "0.24.0"
+bevy_mod_picking = { version = "0.17.0",  default-features = false, features = ["backend_sprite"]}
 rand = "0.8.5"
 
 # Enable a small amount of optimization in debug mode
