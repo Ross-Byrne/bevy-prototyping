@@ -99,16 +99,17 @@ fn spawn_station_menu(
         .spawn(NodeBundle {
             style: Style {
                 display: Display::Flex,
-                flex_direction: FlexDirection::Row,
+                flex_direction: FlexDirection::RowReverse,
                 width: Val::Percent(100.0),
                 height: Val::Auto,
-                justify_content: JustifyContent::End,
+                justify_content: JustifyContent::SpaceBetween,
                 align_items: AlignItems::Center,
-                border: UiRect::all(Val::Px(1.0)),
+                // border: UiRect::all(Val::Px(1.0)),
                 padding: UiRect::all(Val::Px(2.0)),
                 ..default()
             },
-            border_color: BorderColor(Color::BLACK),
+            // background_color: BackgroundColor(Color::DARK_GRAY),
+            // border_color: BorderColor(Color::BLACK),
             ..default()
         })
         .id();
@@ -120,17 +121,13 @@ fn spawn_station_menu(
                 style: Style {
                     width: Val::Px(32.0),
                     height: Val::Px(32.0),
-                    justify_self: JustifySelf::End,
-                    align_self: AlignSelf::End,
-                    // horizontally center child text
                     justify_content: JustifyContent::Center,
-                    // vertically center child text
                     align_items: AlignItems::Center,
-                    border: UiRect::all(Val::Px(1.0)),
+                    // border: UiRect::all(Val::Px(1.0)),
                     ..default()
                 },
                 background_color: BackgroundColor(Color::rgba(0., 0., 0., 0.)),
-                border_color: BorderColor(Color::BLACK),
+                // border_color: BorderColor(Color::BLACK),
                 ..default()
             },
             ExitButton,
@@ -150,6 +147,37 @@ fn spawn_station_menu(
 
     commands.entity(button).push_children(&[button_text]);
     commands.entity(exit_button_row).push_children(&[button]);
+
+    let menu_title_text: Entity = commands
+        .spawn(TextBundle::from_section(
+            station.name.to_string(),
+            TextStyle {
+                font_size: 30.0,
+                color: Color::rgb(0.9, 0.9, 0.9),
+                ..default()
+            },
+        ))
+        .id();
+
+    commands
+        .entity(exit_button_row)
+        .push_children(&[menu_title_text]);
+
+    let offset: Entity = commands
+        .spawn(NodeBundle {
+            style: Style {
+                width: Val::Px(32.0),
+                height: Val::Px(32.0),
+                // border: UiRect::all(Val::Px(1.0)),
+                ..default()
+            },
+            // border_color: BorderColor(Color::BLACK),
+            ..default()
+        })
+        .id();
+
+    commands.entity(exit_button_row).push_children(&[offset]);
+
     commands.entity(container).push_children(&[exit_button_row]);
 
     let content_container: Entity = commands
@@ -161,11 +189,11 @@ fn spawn_station_menu(
                 height: Val::Percent(100.0),
                 justify_content: JustifyContent::Center,
                 align_items: AlignItems::Start,
-                border: UiRect::all(Val::Px(1.0)),
+                // border: UiRect::all(Val::Px(1.0)),
                 padding: UiRect::all(Val::Px(6.0)),
                 ..default()
             },
-            border_color: BorderColor(Color::BLACK),
+            // border_color: BorderColor(Color::BLACK),
             ..default()
         })
         .id();
