@@ -15,8 +15,8 @@ impl Station {
 }
 
 #[derive(Event, Debug)]
-struct OnStationClicked {
-    entity: Entity,
+pub struct OnStationClicked {
+    pub entity: Entity,
 }
 
 impl From<ListenerInput<Pointer<Click>>> for OnStationClicked {

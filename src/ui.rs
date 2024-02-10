@@ -1,4 +1,7 @@
+mod station_menu;
+
 use crate::state::{GameState, OnGameStart};
+use crate::ui::station_menu::StationMenuPlugin;
 use crate::util::despawn_components;
 use bevy::{app::AppExit, prelude::*};
 
@@ -18,7 +21,8 @@ pub struct ExitButton;
 
 impl Plugin for UIPlugin {
     fn build(&self, app: &mut App) {
-        app.add_systems(OnEnter(GameState::StartMenu), spawn_buttons)
+        app.add_plugins(StationMenuPlugin)
+            .add_systems(OnEnter(GameState::StartMenu), spawn_start_menu)
             .add_systems(
                 Update,
                 (button_system, on_click_start, on_click_exit)
@@ -67,7 +71,7 @@ fn get_text_bundle(text: &str) -> TextBundle {
     );
 }
 
-fn spawn_buttons(mut commands: Commands) {
+fn spawn_start_menu(mut commands: Commands) {
     // Create and spawn main UI container
     let container_node = NodeBundle {
         style: Style {
