@@ -1,8 +1,13 @@
 use crate::level_manager::{OnStationClicked, Station};
+use crate::state::GameState;
 
-use super::{get_button_bundle, get_text_bundle};
+// use super::{get_button_bundle, get_text_bundle};
+use crate::util::despawn_components;
 use bevy::ecs::query::QueryEntityError;
 use bevy::prelude::*;
+
+#[derive(Event, Debug)]
+struct OnStationMenuExit;
 
 #[derive(Component, Debug)]
 pub struct StationMenuRoot;
@@ -14,10 +19,16 @@ pub struct StationMenuPlugin;
 
 impl Plugin for StationMenuPlugin {
     fn build(&self, app: &mut App) {
-        app.add_systems(
-            Update,
-            spawn_station_menu.run_if(on_event::<OnStationClicked>()),
-        );
+        app.add_event::<OnStationMenuExit>()
+            .add_systems(Update, on_click_exit)
+            .add_systems(
+                Update,
+                spawn_station_menu.run_if(on_event::<OnStationClicked>()),
+            )
+            .add_systems(
+                Update,
+                despawn_components::<StationMenuRoot>.run_if(on_event::<OnStationMenuExit>()),
+            );
     }
 }
 
@@ -27,7 +38,15 @@ fn spawn_station_menu(
     mut commands: Commands,
     mut event_reader: EventReader<OnStationClicked>,
     query: Query<&Station>,
+    state: Res<State<GameState>>,
+    mut next_state: ResMut<NextState<GameState>>,
 ) {
+    // Don't spawn menu if already in game menu
+    match state.get() {
+        GameState::InGameMenu => return,
+        _ => (),
+    }
+
     let mut station_option: Option<Result<&Station, QueryEntityError>> = None;
 
     // Get station result from event
@@ -47,6 +66,9 @@ fn spawn_station_menu(
     };
 
     info!("Attempting to spawn station menu for: {:?}", station);
+
+    // Set game state to InGameMenu
+    next_state.set(GameState::InGameMenu);
 
     // Create and spawn main UI container
     let container: Entity = commands
@@ -163,4 +185,25 @@ fn spawn_station_menu(
     // let button_text = commands.spawn(get_text_bundle("Quit")).id();
     // commands.entity(button).push_children(&[button_text]);
     // commands.entity(container).push_children(&[button]);
+}
+
+fn on_click_exit(
+    mut event_writer: EventWriter<OnStationMenuExit>,
+    mut interaction_query: Query<&Interaction, (Changed<Interaction>, With<ExitButton>)>,
+    mut next_state: ResMut<NextState<GameState>>,
+) {
+    for interaction in &mut interaction_query {
+        match *interaction {
+            Interaction::Pressed => {
+                info!("clicked Exit!");
+
+                // Send exit menu event.
+                event_writer.send(OnStationMenuExit);
+
+                // set state to be InGame
+                next_state.set(GameState::InGame);
+            }
+            _ => {}
+        }
+    }
 }
