@@ -2,6 +2,7 @@ mod asset_loader;
 mod camera;
 mod debug;
 mod enemy;
+mod item_manager;
 mod level_manager;
 mod movement;
 mod player;
@@ -16,6 +17,7 @@ use bevy_mod_picking::prelude::*;
 use camera::CameraPlugin;
 // use debug::DebugPlugin;
 use enemy::EnemyPlugin;
+use item_manager::ItemManagerPlugin;
 use level_manager::LevelManagerPlugin;
 use movement::MovementPlugin;
 use player::PlayerPlugin;
@@ -40,5 +42,6 @@ fn main() {
         // .add_plugins(DebugPlugin)
         .add_plugins(StatePlugin)
         .add_plugins(LevelManagerPlugin)
+        .add_plugins(ItemManagerPlugin)
         .run();
 }

@@ -1,4 +1,5 @@
 use crate::asset_loader::ImageAssets;
+use crate::item_manager::*;
 use crate::state::GameState;
 use bevy::prelude::*;
 use bevy_mod_picking::prelude::*;
@@ -6,11 +7,12 @@ use bevy_mod_picking::prelude::*;
 #[derive(Component, Debug)]
 pub struct Station {
     pub name: String,
+    pub inventory: Inventory,
 }
 
 impl Station {
-    pub fn new(name: String) -> Self {
-        Self { name }
+    pub fn new(name: String, inventory: Inventory) -> Self {
+        return Self { name, inventory };
     }
 }
 
@@ -46,7 +48,13 @@ impl Plugin for LevelManagerPlugin {
 fn setup(mut commands: Commands, image_assets: Res<ImageAssets>) {
     info!("level manager is setting up level");
 
-    // Start spawning game object
+    // Spawn station number 1
+    let inventory: Inventory = Inventory::new(vec![
+        Item::new(ItemType::EnergyCell, 1, 100),
+        Item::new(ItemType::IronOre, 2, 50),
+        Item::new(ItemType::Silica, 2, 30),
+    ]);
+    let station: Station = Station::new(String::from("Trade Station 1"), inventory);
 
     commands.spawn((
         SpriteBundle {
@@ -54,10 +62,18 @@ fn setup(mut commands: Commands, image_assets: Res<ImageAssets>) {
             transform: Transform::from_xyz(200.0, 200.0, 1.0).with_scale(Vec3::splat(0.6)),
             ..default()
         },
-        Station::new("Tade Station 1".to_owned()),
+        station,
         Clickable,
         On::<Pointer<Click>>::send_event::<OnStationClicked>(),
     ));
+
+    // Spawn station number 2
+    let inventory: Inventory = Inventory::new(vec![
+        Item::new(ItemType::EnergyCell, 1, 200),
+        Item::new(ItemType::IronOre, 2, 20),
+        Item::new(ItemType::Silica, 3, 60),
+    ]);
+    let station: Station = Station::new(String::from("Trade Station 2"), inventory);
 
     commands.spawn((
         SpriteBundle {
@@ -65,7 +81,7 @@ fn setup(mut commands: Commands, image_assets: Res<ImageAssets>) {
             transform: Transform::from_xyz(100.0, 400.0, 1.0).with_scale(Vec3::splat(0.6)),
             ..default()
         },
-        Station::new("Tade Station 2".to_owned()),
+        station,
         Clickable,
         On::<Pointer<Click>>::send_event::<OnStationClicked>(),
     ));
