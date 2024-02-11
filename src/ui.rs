@@ -71,6 +71,50 @@ fn get_text_bundle(text: &str) -> TextBundle {
     );
 }
 
+pub fn spawn_ui_row(commands: &mut Commands, width: Val, height: Val) -> Entity {
+    let entity: Entity = commands
+        .spawn(NodeBundle {
+            style: Style {
+                display: Display::Flex,
+                flex_direction: FlexDirection::RowReverse,
+                width,
+                height,
+                justify_content: JustifyContent::SpaceBetween,
+                align_items: AlignItems::Center,
+                border: UiRect::all(Val::Px(1.0)),
+                padding: UiRect::all(Val::Px(2.0)),
+                ..default()
+            },
+            border_color: BorderColor(Color::BLACK),
+            ..default()
+        })
+        .id();
+
+    return entity;
+}
+
+pub fn spawn_ui_col(commands: &mut Commands, width: Val, height: Val) -> Entity {
+    let entity: Entity = commands
+        .spawn(NodeBundle {
+            style: Style {
+                display: Display::Flex,
+                flex_direction: FlexDirection::Column,
+                width,
+                height,
+                justify_content: JustifyContent::Center,
+                align_items: AlignItems::Start,
+                border: UiRect::all(Val::Px(1.0)),
+                padding: UiRect::all(Val::Px(6.0)),
+                ..default()
+            },
+            border_color: BorderColor(Color::BLACK),
+            ..default()
+        })
+        .id();
+
+    return entity;
+}
+
 fn spawn_start_menu(mut commands: Commands) {
     // Create and spawn main UI container
     let container_node = NodeBundle {

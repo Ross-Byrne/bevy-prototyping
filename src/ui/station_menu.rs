@@ -1,6 +1,7 @@
 use crate::level_manager::{OnStationClicked, Station};
 use crate::state::GameState;
 
+use crate::ui::{spawn_ui_col, spawn_ui_row};
 // use super::{get_button_bundle, get_text_bundle};
 use crate::util::despawn_components;
 use bevy::ecs::query::QueryEntityError;
@@ -95,24 +96,8 @@ fn spawn_station_menu(
         ))
         .id();
 
-    let exit_button_row: Entity = commands
-        .spawn(NodeBundle {
-            style: Style {
-                display: Display::Flex,
-                flex_direction: FlexDirection::RowReverse,
-                width: Val::Percent(100.0),
-                height: Val::Auto,
-                justify_content: JustifyContent::SpaceBetween,
-                align_items: AlignItems::Center,
-                // border: UiRect::all(Val::Px(1.0)),
-                padding: UiRect::all(Val::Px(2.0)),
-                ..default()
-            },
-            // background_color: BackgroundColor(Color::DARK_GRAY),
-            // border_color: BorderColor(Color::BLACK),
-            ..default()
-        })
-        .id();
+    // spawn exit button row
+    let exit_button_row: Entity = spawn_ui_row(&mut commands, Val::Percent(100.), Val::Auto);
 
     // Create exit button
     let button: Entity = commands
@@ -177,42 +162,13 @@ fn spawn_station_menu(
         .id();
 
     commands.entity(exit_button_row).push_children(&[offset]);
-
     commands.entity(container).push_children(&[exit_button_row]);
 
-    let content_container: Entity = commands
-        .spawn(NodeBundle {
-            style: Style {
-                display: Display::Flex,
-                flex_direction: FlexDirection::Column,
-                width: Val::Percent(100.0),
-                height: Val::Percent(100.0),
-                justify_content: JustifyContent::Center,
-                align_items: AlignItems::Start,
-                // border: UiRect::all(Val::Px(1.0)),
-                padding: UiRect::all(Val::Px(6.0)),
-                ..default()
-            },
-            // border_color: BorderColor(Color::BLACK),
-            ..default()
-        })
-        .id();
-
+    let content_container: Entity =
+        spawn_ui_col(&mut commands, Val::Percent(100.), Val::Percent(100.));
     commands
         .entity(container)
         .push_children(&[content_container]);
-
-    // // Create and spawn Settings Button
-    // let button = commands.spawn((get_button_bundle(), SettingsButton)).id();
-    // let button_text = commands.spawn(get_text_bundle("Settings")).id();
-    // commands.entity(button).push_children(&[button_text]);
-    // commands.entity(container).push_children(&[button]);
-
-    // // Create and spawn Quit Button
-    // let button = commands.spawn((get_button_bundle(), ExitButton)).id();
-    // let button_text = commands.spawn(get_text_bundle("Quit")).id();
-    // commands.entity(button).push_children(&[button_text]);
-    // commands.entity(container).push_children(&[button]);
 }
 
 fn on_click_exit(
