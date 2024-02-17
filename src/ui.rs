@@ -109,36 +109,6 @@ pub fn spawn_ui_row(commands: &mut Commands, width: Val, height: Val) -> Entity 
     return entity;
 }
 
-// pub fn spawn_ui_row_style(commands: &mut Commands, style: Style) -> Entity {
-//     let default_style: Style = Style {
-//         display: Display::Flex,
-//         flex_direction: FlexDirection::Row,
-//         width: Val::Percent(100.),
-//         height: Val::Auto,
-//         padding: UiRect::all(Val::Px(2.0)),
-
-//         // for debugging
-//         border: UiRect::all(Val::Px(1.0)),
-
-//         ..default()
-//     };
-
-//     let style: Style = style.merge(default_style);
-
-//     let entity: Entity = commands
-//         .spawn(NodeBundle {
-//             style: Style {
-//                 ..style,
-//                 ..default_style
-//             },
-//             border_color: BorderColor(Color::BLACK),
-//             ..default()
-//         })
-//         .id();
-
-//     return entity;
-// }
-
 pub fn spawn_ui_col(commands: &mut Commands, width: Val, height: Val) -> Entity {
     let entity: Entity = commands
         .spawn(NodeBundle {
