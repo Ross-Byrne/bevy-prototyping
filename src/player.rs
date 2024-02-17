@@ -10,9 +10,6 @@ pub struct PlayerPlugin;
 pub struct Player;
 
 #[derive(Component, Debug)]
-pub struct Shield;
-
-#[derive(Component, Debug)]
 pub struct Projectile {
     pub despawn_timer: Timer,
 }
@@ -57,25 +54,6 @@ fn spawn_player(mut commands: Commands, image_assets: Res<ImageAssets>) {
         Player,
         Rotation::new(),
     ));
-
-    // // Add player shield and scale up sprite
-    // let shield_transform: Transform =
-    //     Transform::from_translation(player_transform.translation).with_scale(Vec3::splat(0.4));
-
-    // commands.spawn((
-    //     MovingObjectBundle {
-    //         velocity: Velocity::new(Vec3::ZERO),
-    //         acceleration: Acceleration::new(Vec3::ZERO),
-    //         sprite: SpriteBundle {
-    //             texture: image_assets.shield.clone(),
-    //             transform: shield_transform,
-    //             ..default()
-    //         },
-    //     },
-    //     Player,
-    //     Shield,
-    //     Rotation::new(),
-    // ));
 }
 
 fn player_movement(
@@ -115,7 +93,7 @@ fn player_movement(
 
 fn player_weapon_controls(
     mut commands: Commands,
-    query: Query<&Transform, (With<Player>, Without<Shield>)>,
+    query: Query<&Transform, With<Player>>,
     keyboard_input: Res<Input<KeyCode>>,
     image_assets: Res<ImageAssets>,
 ) {

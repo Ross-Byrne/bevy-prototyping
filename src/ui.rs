@@ -4,6 +4,7 @@ use crate::state::{GameState, OnGameStart};
 use crate::ui::station_menu::StationMenuPlugin;
 use crate::util::despawn_components;
 use bevy::{app::AppExit, prelude::*};
+
 pub struct UIPlugin;
 
 #[derive(Component, Debug)]

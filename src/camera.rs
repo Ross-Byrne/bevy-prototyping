@@ -1,4 +1,4 @@
-use crate::player::{Player, Shield};
+use crate::player::Player;
 use crate::schedule::InGameSet;
 use bevy::prelude::*;
 
@@ -21,7 +21,7 @@ fn setup(mut commands: Commands, _asset_server: Res<AssetServer>) {
 }
 
 pub fn sync_player_camera(
-    player: Query<&Transform, (With<Player>, Without<Shield>)>,
+    player: Query<&Transform, With<Player>>,
     mut camera: Query<&mut Transform, (With<MainCamera>, Without<Player>)>,
 ) {
     let Ok(player) = player.get_single() else {

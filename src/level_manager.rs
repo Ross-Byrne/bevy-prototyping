@@ -51,7 +51,6 @@ fn setup(mut commands: Commands, image_assets: Res<ImageAssets>) {
     // Spawn station number 1
     let inventory: Inventory = Inventory::new(vec![
         Item::new(ItemType::EnergyCell, 1, 100),
-        // Item::new(ItemType::IronOre, 2, 50),
         Item::new(ItemType::Silica, 2, 30),
     ]);
     let station: Station = Station::new(String::from("Trade Station 1"), inventory);
@@ -71,7 +70,6 @@ fn setup(mut commands: Commands, image_assets: Res<ImageAssets>) {
     let inventory: Inventory = Inventory::new(vec![
         Item::new(ItemType::EnergyCell, 1, 200),
         Item::new(ItemType::IronOre, 2, 20),
-        // Item::new(ItemType::Silica, 3, 60),
     ]);
     let station: Station = Station::new(String::from("Trade Station 2"), inventory);
 
@@ -87,7 +85,6 @@ fn setup(mut commands: Commands, image_assets: Res<ImageAssets>) {
     ));
 }
 
-/// Unlike callback systems, this is a normal system that can be run in parallel with other systems.
 fn on_station_clicked(mut event_reader: EventReader<OnStationClicked>, query: Query<&Station>) {
     for event in event_reader.read() {
         let Ok(station) = query.get(event.entity) else {
