@@ -1,8 +1,6 @@
+use super::{get_flex_child, get_text_bundle, spawn_ui_col, spawn_ui_row};
 use crate::level_manager::{OnStationClicked, Station};
 use crate::state::GameState;
-
-use crate::ui::{spawn_ui_col, spawn_ui_row};
-// use super::{get_button_bundle, get_text_bundle};
 use crate::util::despawn_components;
 use bevy::ecs::query::QueryEntityError;
 use bevy::prelude::*;
@@ -119,28 +117,12 @@ fn spawn_station_menu(
         ))
         .id();
 
-    let button_text: Entity = commands
-        .spawn(TextBundle::from_section(
-            "X",
-            TextStyle {
-                font_size: 30.0,
-                color: Color::rgb(0.9, 0.9, 0.9),
-                ..default()
-            },
-        ))
-        .id();
+    let button_text: Entity = commands.spawn(get_text_bundle("X".to_string(), 30.)).id();
 
     commands.entity(button).push_children(&[button_text]);
 
     let menu_title_text: Entity = commands
-        .spawn(TextBundle::from_section(
-            station.name.to_string(),
-            TextStyle {
-                font_size: 30.0,
-                color: Color::rgb(0.9, 0.9, 0.9),
-                ..default()
-            },
-        ))
+        .spawn(get_text_bundle(station.name.to_string(), 30.))
         .id();
 
     let offset: Entity = commands
@@ -185,7 +167,7 @@ fn spawn_station_menu(
     for item in station.inventory.items.iter() {
         let row: Entity = spawn_text_row(
             &mut commands,
-            18.0,
+            17.0,
             item.name.to_string(),
             item.quantity.to_string(),
             item.value.to_string(),
@@ -203,44 +185,36 @@ fn spawn_text_row(
     quantity: String,
     value: String,
 ) -> Entity {
+    let basis_percent: f32 = 33.333;
     let row_entity: Entity = spawn_ui_row(commands, Val::Percent(100.), Val::Auto);
 
-    let name_text: Entity = commands
-        .spawn(TextBundle::from_section(
-            name,
-            TextStyle {
-                font_size,
-                color: Color::rgb(0.9, 0.9, 0.9),
-                ..default()
-            },
-        ))
+    let name_container: Entity = commands
+        .spawn(get_flex_child(basis_percent, JustifyContent::Start))
         .id();
+    let name_text: Entity = commands.spawn(get_text_bundle(name, font_size)).id();
+    commands.entity(name_container).push_children(&[name_text]);
 
-    let quantity_text: Entity = commands
-        .spawn(TextBundle::from_section(
-            quantity,
-            TextStyle {
-                font_size,
-                color: Color::rgb(0.9, 0.9, 0.9),
-                ..default()
-            },
-        ))
+    let quantity_text: Entity = commands.spawn(get_text_bundle(quantity, font_size)).id();
+    let quantity_container: Entity = commands
+        .spawn(get_flex_child(basis_percent, JustifyContent::End))
         .id();
-
-    let value_text: Entity = commands
-        .spawn(TextBundle::from_section(
-            value,
-            TextStyle {
-                font_size,
-                color: Color::rgb(0.9, 0.9, 0.9),
-                ..default()
-            },
-        ))
-        .id();
-
     commands
-        .entity(row_entity)
-        .push_children(&[name_text, quantity_text, value_text]);
+        .entity(quantity_container)
+        .push_children(&[quantity_text]);
+
+    let value_text: Entity = commands.spawn(get_text_bundle(value, font_size)).id();
+    let value_container: Entity = commands
+        .spawn(get_flex_child(basis_percent, JustifyContent::End))
+        .id();
+    commands
+        .entity(value_container)
+        .push_children(&[value_text]);
+
+    commands.entity(row_entity).push_children(&[
+        name_container,
+        quantity_container,
+        value_container,
+    ]);
 
     return row_entity;
 }

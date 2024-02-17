@@ -51,7 +51,7 @@ fn setup(mut commands: Commands, image_assets: Res<ImageAssets>) {
     // Spawn station number 1
     let inventory: Inventory = Inventory::new(vec![
         Item::new(ItemType::EnergyCell, 1, 100),
-        Item::new(ItemType::IronOre, 2, 50),
+        // Item::new(ItemType::IronOre, 2, 50),
         Item::new(ItemType::Silica, 2, 30),
     ]);
     let station: Station = Station::new(String::from("Trade Station 1"), inventory);
@@ -71,7 +71,7 @@ fn setup(mut commands: Commands, image_assets: Res<ImageAssets>) {
     let inventory: Inventory = Inventory::new(vec![
         Item::new(ItemType::EnergyCell, 1, 200),
         Item::new(ItemType::IronOre, 2, 20),
-        Item::new(ItemType::Silica, 3, 60),
+        // Item::new(ItemType::Silica, 3, 60),
     ]);
     let station: Station = Station::new(String::from("Trade Station 2"), inventory);
 

@@ -38,6 +38,7 @@ impl Plugin for UIPlugin {
 const NORMAL_BUTTON: Color = Color::rgb(0.15, 0.15, 0.15);
 const PRESSED_BUTTON: Color = Color::rgb(0.15, 0.15, 0.6);
 const HOVERED_BUTTON: Color = Color::rgb(0.15, 0.3, 0.15);
+const TEXT_COLOUR: Color = Color::rgb(0.9, 0.9, 0.9);
 
 const BUTTON_HEIGHT: Val = Val::Px(65.0);
 const BUTTON_WIDTH: Val = Val::Px(240.0);
@@ -59,15 +60,31 @@ fn get_button_bundle() -> ButtonBundle {
     };
 }
 
-fn get_text_bundle(text: &str) -> TextBundle {
+fn get_text_bundle(value: String, font_size: f32) -> TextBundle {
     return TextBundle::from_section(
-        text,
+        value,
         TextStyle {
-            font_size: 40.0,
-            color: Color::rgb(0.9, 0.9, 0.9),
+            font_size,
+            color: TEXT_COLOUR,
             ..default()
         },
     );
+}
+
+fn get_flex_child(basis_percent: f32, justify_content: JustifyContent) -> NodeBundle {
+    return NodeBundle {
+        style: Style {
+            width: Val::Auto,
+            height: Val::Auto,
+            justify_content,
+            flex_basis: Val::Percent(basis_percent),
+            padding: UiRect::all(Val::Px(2.0)),
+            // border: UiRect::all(Val::Px(1.0)),
+            ..default()
+        },
+        // border_color: BorderColor(Color::RED),
+        ..default()
+    };
 }
 
 pub fn spawn_ui_row(commands: &mut Commands, width: Val, height: Val) -> Entity {
@@ -80,11 +97,11 @@ pub fn spawn_ui_row(commands: &mut Commands, width: Val, height: Val) -> Entity 
                 height,
                 justify_content: JustifyContent::SpaceBetween,
                 align_items: AlignItems::Center,
-                border: UiRect::all(Val::Px(1.0)),
+                // border: UiRect::all(Val::Px(1.0)),
                 padding: UiRect::all(Val::Px(2.0)),
                 ..default()
             },
-            border_color: BorderColor(Color::BLACK),
+            // border_color: BorderColor(Color::BLACK),
             ..default()
         })
         .id();
@@ -162,19 +179,25 @@ fn spawn_start_menu(mut commands: Commands) {
 
     // Create and spawn Start Game Button
     let button = commands.spawn((get_button_bundle(), StartButton)).id();
-    let button_text = commands.spawn(get_text_bundle("Start Game")).id();
+    let button_text = commands
+        .spawn(get_text_bundle("Start Game".to_string(), 40.0))
+        .id();
     commands.entity(button).push_children(&[button_text]);
     commands.entity(container).push_children(&[button]);
 
     // Create and spawn Settings Button
     let button = commands.spawn((get_button_bundle(), SettingsButton)).id();
-    let button_text = commands.spawn(get_text_bundle("Settings")).id();
+    let button_text = commands
+        .spawn(get_text_bundle("Settings".to_string(), 40.0))
+        .id();
     commands.entity(button).push_children(&[button_text]);
     commands.entity(container).push_children(&[button]);
 
     // Create and spawn Quit Button
     let button = commands.spawn((get_button_bundle(), ExitButton)).id();
-    let button_text = commands.spawn(get_text_bundle("Quit")).id();
+    let button_text = commands
+        .spawn(get_text_bundle("Quit".to_string(), 40.0))
+        .id();
     commands.entity(button).push_children(&[button_text]);
     commands.entity(container).push_children(&[button]);
 }
