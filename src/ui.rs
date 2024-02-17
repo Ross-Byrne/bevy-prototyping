@@ -4,7 +4,6 @@ use crate::state::{GameState, OnGameStart};
 use crate::ui::station_menu::StationMenuPlugin;
 use crate::util::despawn_components;
 use bevy::{app::AppExit, prelude::*};
-
 pub struct UIPlugin;
 
 #[derive(Component, Debug)]
@@ -76,7 +75,7 @@ pub fn spawn_ui_row(commands: &mut Commands, width: Val, height: Val) -> Entity 
         .spawn(NodeBundle {
             style: Style {
                 display: Display::Flex,
-                flex_direction: FlexDirection::RowReverse,
+                flex_direction: FlexDirection::Row,
                 width,
                 height,
                 justify_content: JustifyContent::SpaceBetween,
@@ -93,6 +92,36 @@ pub fn spawn_ui_row(commands: &mut Commands, width: Val, height: Val) -> Entity 
     return entity;
 }
 
+// pub fn spawn_ui_row_style(commands: &mut Commands, style: Style) -> Entity {
+//     let default_style: Style = Style {
+//         display: Display::Flex,
+//         flex_direction: FlexDirection::Row,
+//         width: Val::Percent(100.),
+//         height: Val::Auto,
+//         padding: UiRect::all(Val::Px(2.0)),
+
+//         // for debugging
+//         border: UiRect::all(Val::Px(1.0)),
+
+//         ..default()
+//     };
+
+//     let style: Style = style.merge(default_style);
+
+//     let entity: Entity = commands
+//         .spawn(NodeBundle {
+//             style: Style {
+//                 ..style,
+//                 ..default_style
+//             },
+//             border_color: BorderColor(Color::BLACK),
+//             ..default()
+//         })
+//         .id();
+
+//     return entity;
+// }
+
 pub fn spawn_ui_col(commands: &mut Commands, width: Val, height: Val) -> Entity {
     let entity: Entity = commands
         .spawn(NodeBundle {
@@ -101,8 +130,8 @@ pub fn spawn_ui_col(commands: &mut Commands, width: Val, height: Val) -> Entity 
                 flex_direction: FlexDirection::Column,
                 width,
                 height,
-                justify_content: JustifyContent::Center,
-                align_items: AlignItems::Start,
+                justify_content: JustifyContent::Start,
+                align_items: AlignItems::Center,
                 border: UiRect::all(Val::Px(1.0)),
                 padding: UiRect::all(Val::Px(6.0)),
                 ..default()

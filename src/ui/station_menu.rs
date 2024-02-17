@@ -131,7 +131,6 @@ fn spawn_station_menu(
         .id();
 
     commands.entity(button).push_children(&[button_text]);
-    commands.entity(exit_button_row).push_children(&[button]);
 
     let menu_title_text: Entity = commands
         .spawn(TextBundle::from_section(
@@ -143,10 +142,6 @@ fn spawn_station_menu(
             },
         ))
         .id();
-
-    commands
-        .entity(exit_button_row)
-        .push_children(&[menu_title_text]);
 
     let offset: Entity = commands
         .spawn(NodeBundle {
@@ -161,7 +156,9 @@ fn spawn_station_menu(
         })
         .id();
 
-    commands.entity(exit_button_row).push_children(&[offset]);
+    commands
+        .entity(exit_button_row)
+        .push_children(&[offset, menu_title_text, button]);
     commands.entity(container).push_children(&[exit_button_row]);
 
     let content_container: Entity =
@@ -169,6 +166,83 @@ fn spawn_station_menu(
     commands
         .entity(container)
         .push_children(&[content_container]);
+
+    // Create header for listing items
+    let header_row = spawn_text_row(
+        &mut commands,
+        24.0,
+        "Name".to_string(),
+        "Quantity".to_string(),
+        "Value".to_string(),
+    );
+    commands
+        .entity(content_container)
+        .push_children(&[header_row]);
+
+    // Loop through items in station
+    let mut item_rows: Vec<Entity> = Vec::new();
+
+    for item in station.inventory.items.iter() {
+        let row: Entity = spawn_text_row(
+            &mut commands,
+            18.0,
+            item.name.to_string(),
+            item.quantity.to_string(),
+            item.value.to_string(),
+        );
+        item_rows.push(row);
+    }
+
+    commands.entity(content_container).push_children(&item_rows);
+}
+
+fn spawn_text_row(
+    commands: &mut Commands,
+    font_size: f32,
+    name: String,
+    quantity: String,
+    value: String,
+) -> Entity {
+    let row_entity: Entity = spawn_ui_row(commands, Val::Percent(100.), Val::Auto);
+
+    let name_text: Entity = commands
+        .spawn(TextBundle::from_section(
+            name,
+            TextStyle {
+                font_size,
+                color: Color::rgb(0.9, 0.9, 0.9),
+                ..default()
+            },
+        ))
+        .id();
+
+    let quantity_text: Entity = commands
+        .spawn(TextBundle::from_section(
+            quantity,
+            TextStyle {
+                font_size,
+                color: Color::rgb(0.9, 0.9, 0.9),
+                ..default()
+            },
+        ))
+        .id();
+
+    let value_text: Entity = commands
+        .spawn(TextBundle::from_section(
+            value,
+            TextStyle {
+                font_size,
+                color: Color::rgb(0.9, 0.9, 0.9),
+                ..default()
+            },
+        ))
+        .id();
+
+    commands
+        .entity(row_entity)
+        .push_children(&[name_text, quantity_text, value_text]);
+
+    return row_entity;
 }
 
 fn on_click_exit(
